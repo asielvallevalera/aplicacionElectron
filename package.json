@@ -19,5 +19,8 @@
   "homepage": "https://github.com/asielvallevalera/aplicacionElectron#readme",
   "devDependencies": {
     "electron": "^20.1.0"
+  },
+  "dependencies": {
+    "electron-reload": "^2.0.0-alpha.1"
   }
 }

@@ -13,9 +13,10 @@ if(process.env.NODE_ENV !== 'production') {
 }
 
 let mainWindow
+let newProductWindow
 
 app.on('ready', () => {
-      // Ventana principal.
+      // Creando ventana principal.
       mainWindow = new BrowserWindow({});
       mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'views/index.html'),
@@ -23,20 +24,90 @@ app.on('ready', () => {
             slashes: true
       }))
 
-      // Creo el menú.
-      const mainMenu = Menu.buildFromTemplate(templateMenu)
+      // El menú.
+      const mainMenu = Menu.buildFromTemplate(templateMenu);
       Menu.setApplicationMenu(mainMenu);
+
+      // Al cerrar la ventana principal, cierra toda la aplicación.
+      mainWindow.on('closed', () =>{
+            app.quit()
+;      }) 
 })
+
+// Ventana secundaria.
+function createNewProductWindow() {
+      // La creo
+      newProductWindow = new BrowserWindow({
+            with: 200,
+            height: 330,
+            title: 'Add A New Product'
+      });
+      newProductWindow.setMenu(null); // Deshabilita el menú que viene desde la ventana principal.
+      // Le asigno contenido.
+      newProductWindow.loadURL(url.format({
+            pathname: path.join(__dirname, 'views/new-product.html'),
+            protocol: 'file',
+            slashes: true
+      }))
+      newProductWindow.on('closed', () => {
+            newProductWindow = null;
+      }) 
+}
 
 const templateMenu = [
       {
             label: 'File',
-            submenu: {
-                  label: 'New Product',
-                  accelerator: 'Ctrl+N',
-                  click() {
-                        alert("New Product");
+            submenu: [
+                  {
+                        label: 'New Product',
+                        accelerator: 'Ctrl+N',
+                        click() {
+                              createNewProductWindow();
+                        }
+                  },
+                  {
+                        label: 'Remove All Products',
+                        click() {
+
+                        }
+                  },
+                  {
+                        label: 'Exit',
+                        // process.platform devuelve el sistema operativo que está en uno (darwin es MacOS).
+                        accelerator: process.platform == 'darwin' ? 'command+Q' : 'Crtl+Q',
+                        click() {
+                              app.quit();
+                        }
                   }
-            }
-      }
-]
+            ]
+      }      
+];
+
+// Si estamos en MacOS al inicio del menú estará el nombre de la aplicación.
+// process.platform devuelve el sistema operativo que está en uno (darwin es MacOS).
+if(process.platform === 'darwin') {
+      templateMenu.unshift({
+            label: app.getName()  // app.getName() obtiene el nombre de la aplicación.
+      });
+}
+
+// Solo en modo desorrolo tendremos un menú para ver las herraminetas de desarrollo. Este tendrá 2 pestañas.
+// 1) Abrir las opciones de desarrollo.
+// 2) Refrescar la página o ventana.
+if(process.env.NODE_ENV !== 'production') {
+      templateMenu.push({
+            label: 'DevTools',
+            submenu: [
+                  {
+                        label: 'Show/Hide Dev Tools',
+                        click(item, focusedWindow) {
+                              focusedWindow.toggleDevTools(); // 1)
+                        }
+
+                  },
+                  {
+                        role: 'reload' // 2)
+                  }
+            ]
+      });
+}
