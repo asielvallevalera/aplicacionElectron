@@ -1,0 +1,6 @@
+Instala Electron (está en la documentación)
+npm i -D electron@latest
+
+
+Módulo de node. Evita tener que cerrar la app y ejecutar para ver los cambios (ve los cambios en un archivo y los actuliza).
+npm install electron-reload 
