@@ -11,10 +11,13 @@
     "url": "git+https://github.com/asielvallevalera/aplicacionElectron.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ing. Asiel Valle Valera",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/asielvallevalera/aplicacionElectron/issues"
   },
-  "homepage": "https://github.com/asielvallevalera/aplicacionElectron#readme"
+  "homepage": "https://github.com/asielvallevalera/aplicacionElectron#readme",
+  "devDependencies": {
+    "electron": "^20.1.0"
+  }
 }
