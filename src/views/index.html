@@ -1,1 +1,48 @@
-<h1>Hello World.</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Products Electron</title>
+      <link rel="stylesheet" href="../../assets/bootstrap.min.css">
+</head>
+<body>
+    <div class="container p-4">
+      <div id="products"></div>
+    </div>  
+
+    <script>
+      const { ipcRenderer } = require('electron');
+
+      const products = document.querySelector('#products');
+
+      // Los datos del formulario de la ventana new-product.html los envío a la ventana principal (index.html).
+      // Para ello new-product.html => index.js => index.html.
+      ipcRenderer.on('product:new', (e, newProduct) => {
+		const newProductTemplate = `
+			<div class="col-xl-3 p-2">
+            		<div class="card text-center">
+              			<div class="card-header">
+                				<h5 class="card-title"> 
+							${newProduct.name} 
+						</h5>  
+					</div>
+              			<div class="card-body">
+                				${newProduct.description}
+                				<hr/>
+                				${newProduct.price}
+					</div>
+              			<div class="card-footer">
+						<button class="btn btn-danger btn-ms"> DELETE </button>	
+					</div>
+				</div>
+          		</div>
+        	`;
+		products.innerHTML += newProductTemplate;
+      });
+	const btns = document.querySelector('.btn.btn-danger');
+	console.log(btns);
+    </script>
+</body>
+</html>

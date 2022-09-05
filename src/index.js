@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -17,7 +17,17 @@ let newProductWindow
 
 app.on('ready', () => {
       // Creando ventana principal.
-      mainWindow = new BrowserWindow({});
+      mainWindow = new BrowserWindow({
+            width: 800,
+            height: 800,
+            // Solución para el error Uncaught ReferenceError: require is not defined.
+            webPreferences: {
+                  contextIsolation: false,
+                  nodeIntegration: true,
+                  nodeIntegrationInWorker: true,
+                  enableRemoteModule: true
+            }
+      });
       mainWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'views/index.html'),
             protocol: 'file',
@@ -38,11 +48,17 @@ app.on('ready', () => {
 function createNewProductWindow() {
       // La creo
       newProductWindow = new BrowserWindow({
-            with: 200,
-            height: 330,
-            title: 'Add A New Product'
+            width: 500,
+            height: 400,
+            // Solución para el error Uncaught ReferenceError: require is not defined.
+            webPreferences: {
+                  contextIsolation: false,
+                  nodeIntegration: true,
+                  nodeIntegrationInWorker: true,
+                  enableRemoteModule: true
+            }
       });
-      newProductWindow.setMenu(null); // Deshabilita el menú que viene desde la ventana principal.
+      // newProductWindow.setMenu(null); // Deshabilita el menú que viene desde la ventana principal.
       // Le asigno contenido.
       newProductWindow.loadURL(url.format({
             pathname: path.join(__dirname, 'views/new-product.html'),
@@ -53,6 +69,13 @@ function createNewProductWindow() {
             newProductWindow = null;
       }) 
 }
+
+// Los datos del formulario de la ventana new-product.html los envío a la ventana principal (index.html).
+// Para ello new-product.html => index.js => index.html.
+ipcMain.on('product:new', (e, newProduct) => {
+      mainWindow.webContents.send('product:new', newProduct);
+      newProductWindow.close();
+});
 
 const templateMenu = [
       {
@@ -74,7 +97,7 @@ const templateMenu = [
                   {
                         label: 'Exit',
                         // process.platform devuelve el sistema operativo que está en uno (darwin es MacOS).
-                        accelerator: process.platform == 'darwin' ? 'command+Q' : 'Crtl+Q',
+                        accelerator: process.platform == 'darwin' ? 'command+Q' : 'Ctrl+Q',
                         click() {
                               app.quit();
                         }
@@ -97,17 +120,20 @@ if(process.platform === 'darwin') {
 if(process.env.NODE_ENV !== 'production') {
       templateMenu.push({
             label: 'DevTools',
-            submenu: [
-                  {
-                        label: 'Show/Hide Dev Tools',
-                        click(item, focusedWindow) {
-                              focusedWindow.toggleDevTools(); // 1)
-                        }
+            click(item, focusedWindow) {
+                  focusedWindow.toggleDevTools(); // 1)
+            }
+            // submenu: [
+            //       {
+            //             label: 'Show/Hide Dev Tools',
+            //             click(item, focusedWindow) {
+            //                   focusedWindow.toggleDevTools(); // 1)
+            //             }
 
-                  },
-                  {
-                        role: 'reload' // 2)
-                  }
-            ]
+            //       },
+            //       {
+            //             role: 'reload' // 2)
+            //       }
+            // ]
       });
 }
