@@ -4,3 +4,19 @@ npm i -D electron@latest
 
 Módulo de node. Evita tener que cerrar la app y ejecutar para ver los cambios (ve los cambios en un archivo y los actuliza).
 npm install electron-reload 
+
+
+Módulo de Node para empaquetar el proyecto para Linux, Mac o Windowsy crea ejecutable .exe.
+Poner esto:
+En el package.json
+      "productName": "Products Electron App",
+      En el apartado scripts
+            "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+            "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",    
+            "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+  
+npm i electron-packager
+
+Luego ejecuto el comando npm run package-win
+Si me da error que no encuentre el icono, pues en assets/icons/win/icon.ico pongo el ícono de la aplicación (OJO .ico).
+Luego npm run package-win y listo.
